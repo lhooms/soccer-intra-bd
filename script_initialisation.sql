@@ -119,4 +119,28 @@ CREATE TABLE "Remplace"(
     FOREIGN KEY("noEquipe") REFERENCES "Equipe"("noEquipe"),
     FOREIGN KEY("noJoueur") REFERENCES "Joueur"("noJoueur"),
     FOREIGN KEY("noMatch") REFERENCES "MatchDeSoccer"("noMatch")
-);
+); 
+
+
+CREATE VIEW SerieJoueurPresenceFact AS
+WITH nombreMatchsJoueur AS
+(   SELECT "Joueur"."noJoueur" AS IDJOUEUR, "nom", "prenom", COUNT("noMatch") as NombreMatchs,"matricule","sexe","courriel"
+    FROM "Joueur"
+    LEFT JOIN "Presence" P on "Joueur"."noJoueur" = P."noJoueur"
+    GROUP BY IDJOUEUR
+)
+SELECT *
+FROM nombreMatchsJoueur
+WHERE NombreMatchs >= 5; 
+
+
+CREATE VIEW SerieRemplacantPresenceFact AS
+WITH nombreMatchsRemplacant AS
+(   SELECT "Joueur"."noJoueur" AS IDJOUEUR, "nom" , "prenom", COUNT("noMatch") as NombreMatchs,"matricule","sexe","courriel"
+    FROM "Joueur"
+    LEFT JOIN "Remplace" R on "Joueur"."noJoueur" = R."noJoueur"
+    GROUP BY IDJOUEUR
+)
+SELECT *
+FROM nombreMatchsRemplacant
+WHERE NombreMatchs >= 5;
